@@ -594,6 +594,73 @@
                     if (intervals[i].end < intervals[last].end) last = i;
                 } else {
                     last = i;
+                    
++ 376 Wiggle Subsequence
+    1. 动态规划：时间复杂度O(n^2)
+    2. 在连续的降序列和升序列的时候数量不会增加，但并不能使用找极值的方法来解，因为会出现多个点值相等同为局部最小的情况
+    ```c++
+    class Solution {
+    public:
+        int wiggleMaxLength(vector<int>& nums) {
+            if(nums.size() <= 1)    return nums.size();
+            int sign = 0, count = 1;
+            for(int i = 1; i < nums.size(); i++){
+                if(nums[i - 1] < nums[i] && (sign == 0 || sign == 1)){
+                    count++;
+                    sign = 2;
+                }
+                else if(nums[i - 1] > nums[i] && (sign == 0 || sign == 2)){
+                    count++;
+                    sign = 1;
+                }
+            }
+            return count;
+        }
+    };
+    ```
++ 452 Minimum Number of Arrows to Burst Balloons
+    排序后求出所以重叠的区间及独立的区间，总和即为需要放箭的数量
+    ```c++
+    class Solution {
+    public:
+        int findMinArrowShots(vector<pair<int, int>>& points) {
+            if(points.size() == 0)  return 0;
+            vector<pair<int, int>> inter;
+            sort(points.begin(), points.end(), [](const pair<int, int>& a, const pair<int, int>& b){
+                return a.first < b.first || a.first == b.first && a.second < b.second;
+            });
+            inter.push_back(points[0]);
+            for(int i = 1; i < points.size(); i++){
+                if(points[i].first >= inter.back().first && points[i].first <= inter.back().second){
+                    inter.back().first = points[i].first;
+                    if(points[i].second <= inter.back().second){
+                        inter.back().second = points[i].second;
+                    }
+                }
+                else{
+                    inter.push_back(points[i]);
+                }
+            }
+            return inter.size();
+        }
+    };
+    ```
+    这道题给了我们一堆大小不等的气球，用区间范围来表示气球的大小，可能会有重叠区间。然后我们用最少的箭数来将所有的气球打爆。那么这道题是典型的用贪婪算法来做的题，因为局部最优解就等于全局最优解，我们首先给区间排序，我们不用特意去写排序比较函数，因为默认的对于pair的排序，就是按第一个数字升序排列，如果第一个数字相同，那么按第二个数字升序排列，这个就是我们需要的顺序，所以直接用即可。然后我们将res初始化为1，因为气球数量不为0，所以怎么也得先来一发啊，然后这一箭能覆盖的最远位置就是第一个气球的结束点，用变量end来表示。然后我们开始遍历剩下的气球，如果当前气球的开始点小于等于end，说明跟之前的气球有重合，之前那一箭也可以照顾到当前的气球，此时我们要更新end的位置，end更新为两个气球结束点之间较小的那个，这也是当前气球和之前气球的重合点，然后继续看后面的气球；如果某个气球的起始点大于end了，说明前面的箭无法覆盖到当前的气球，那么就得再来一发，既然又来了一发，那么我们此时就要把end设为当前气球的结束点了，这样贪婪算法遍历结束后就能得到最少的箭数了，参见代码如下：
+    ```c++
+    class Solution {
+    public:
+        int findMinArrowShots(vector<pair<int, int>>& points) {
+            if(points.size() == 0)  return 0;
+            sort(points.begin(), points.end(), [](const pair<int, int>& a, const pair<int, int>& b){
+                return a.first < b.first || a.first == b.first && a.second < b.second;
+            });
+            int res = 1, end = points[0].second;
+            for(int i = 1; i < points.size(); i++){
+                if(points[i].first <= end)
+                    end = min(end, points[i].second);
+                else{
+                    res++;
+                    end = points[i].second;
                 }
             }
             return res;
