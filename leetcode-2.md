@@ -667,3 +667,76 @@
         }
     };
     ```
++ 134 Gas Station
+    假设，我们从环上取一个区间[i, j], j>i， 然后对于这个区间的diff加和，定义 
+
+    sum[i,j] = ∑diff[k] where i<=k<j 
+
+    如果sum[i,j]小于0，那么这个起点肯定不为i，跟第一个问题的原理一样。举个例子，假设i是[0,n]的解，那么我们知道 任意sum[k,i-1] (0<=k<i-1) 肯定是小于0的，否则解就应该是k。同理，sum[i,n]一定是大于0的，否则，解就不应该是i，而是i和n之间的某个点。所以第二题的答案，其实就是在0到n之间，找到第一个连续子序列（这个子序列的结尾必然是n）大于0的。
+    ```c++
+    class Solution {
+    public:
+        int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
+            int len = gas.size();  
+            vector<int> diff(gas.size());  
+            for(int i=0; i<len; i++){  
+                diff[i] = gas[i]-cost[i];  
+            }  
+            int startnode=0;  
+            int tank=0;  
+            int sum=0;  
+            for(int i=0;i<len;i++){  
+                tank += diff[i];  
+                sum += diff[i];
+                if(sum < 0){  
+                    sum = 0;  
+                    startnode = i+1;  
+                }  
+            }  
+            if(tank<0)  
+                return -1;  
+            else   
+                return startnode;
+        }
+    };
+    ```
+
++ 402 Remove K Digits
+    n位的数要删除k位，则最后剩n - k位，从左到右遍历数组，依次取出最小的即能得到最小的，注意当取出i位后，下次遍历从i + 1位开始，并且每一次遍历的上限也由还剩多少位未取出决定
+    ```c++
+    class Solution {
+    public:
+        string removeKdigits(string num, int k) {
+            int remain = num.size() - k;
+            string a(1,'0');
+            if(remain <= 0) return a;
+            int start = 0;
+            string res;
+            while(remain >0){
+                int index = start;
+                char min = '9' + 1;
+                for(int i = start; i <= num.size() - remain; i++){
+                    if(num[i] < min){
+                        min = num[i];
+                        index = i;
+                    }
+                }
+                res += num[index];
+                start = index + 1;
+                remain--;
+            }
+            int count = 0;
+            for(int i = 0; i < res.size(); i++){
+                if(res[i] == '0')   count++;
+                else    break;
+            }
+            if(count > 0){
+                if(count == res.size())
+                    res.erase(0, count - 1);
+                else 
+                    res.erase(0, count);
+            }   
+            return res;
+        }
+    };
+    ```
