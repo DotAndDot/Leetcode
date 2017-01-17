@@ -812,3 +812,13 @@
 
 + 437 Path Sum III
     可以使用hash表存储搜索过程中计算的值以降低时间复杂度
+
++ 237 Delete Node in a Linked List
+    ```c++
+    class Solution {
+    public:
+        void deleteNode(ListNode* node) {
+            *node = *(node->next);
+        }
+    };
+    ```
