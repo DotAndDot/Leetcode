@@ -528,8 +528,52 @@
     ```
 
 + 160 Intersection of Two Linked Lists
+    
+    要求时间复杂度O(n)，空间复杂度O(1)，先任选一个链表，将该链表首尾相接，此时就变成了判断链表中是否有环的问题。但是该方法Leetcode上会报wa错误，原因是修改了链表的结构，而本题虽然没有没说但是却默认不能修改链表结构。
 
-    要求时间复杂度O(n)，空间复杂度O(1)，先任选一个链表，将该链表首尾相接，此时就变成了判断链表中是否有环的问题。
+    可以将A,B两个链表看做两部分，交叉前与交叉后。
+    交叉后的长度是一样的，因此交叉前的长度差即为总长度差。
+    只要去除这些长度差，距离交叉点就等距了。
+    为了节省计算，在计算链表长度的时候，顺便比较一下两个链表的尾节点是否一样，
+    若不一样，则不可能相交，直接可以返回NULL
+    ```c++
+    class Solution {
+    public:
+        ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+            if(!headA || !headB)    return NULL;
+            int min = 0;
+            ListNode *pa = headA, *pb = headB;
+            while(pa || pb){
+                if(pa && pb){
+                    pa = pa -> next;
+                    pb = pb -> next;
+                }
+                else if(pa){
+                    pa = pa -> next;
+                    min++;
+                }
+                else if(pb){
+                    pb = pb -> next;
+                    min--;
+                }
+            }
+            while(min > 0){
+                headA = headA->next;
+                min--;
+            }
+            while(min < 0){
+                headB = headB->next;
+                min++;
+            }
+            while(headA && headB){
+                if(headA == headB)  return headA;
+                headA = headA->next;
+                headB = headB->next;
+            }
+            return NULL;
+        }
+    };    
+    ```
 
 + 406 Queue Reconstruct by Height
 
@@ -765,3 +809,6 @@
         }
     };
     ```
+
++ 437 Path Sum III
+    可以使用hash表存储搜索过程中计算的值以降低时间复杂度
