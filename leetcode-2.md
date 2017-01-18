@@ -822,3 +822,31 @@
         }
     };
     ```
+
++ 143 Recorder List
+    用队列或递归实现,递归时注意判断变换位置的终止节点
+    ```c++
+    class Solution {
+    public:
+        ListNode* temp;
+        void recur(ListNode* p, int& flag){
+            if(!p)  return;
+            recur(p->next, flag);
+            if(flag == 1)   return;
+            ListNode* t = temp;
+            temp = temp->next;
+            if(t == p || temp == p){
+                p->next = NULL;
+                flag = 1;
+                return;
+            }
+            t->next = p;
+            p->next = temp;
+        }
+        void reorderList(ListNode* head) {
+            temp = head;
+            int flag = 0;
+            recur(head, flag);
+        }
+    };
+    ```
