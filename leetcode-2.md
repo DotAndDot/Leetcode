@@ -844,7 +844,7 @@
 
 + 143 Recorder List
     用队列或递归实现,递归时注意判断变换位置的终止节点
-     ```c++
+    ```c++
     class Solution {
     public:
         ListNode* temp;
