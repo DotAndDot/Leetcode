@@ -822,3 +822,22 @@
         }
     };
     ```
+
++ 234 Palindrome Linked List
+    大神的递归做法：
+    ```c++
+    class Solution {
+    public:
+        ListNode* temp;
+        bool rec(ListNode* p){
+            if(!p)  return true;
+            bool isp = rec(p->next) & (temp->val == p->val);
+            temp = temp->next;
+            return isp;
+        }
+        bool isPalindrome(ListNode* head) {
+            temp = head;
+            return rec(head);
+        }
+    };
+    ```
