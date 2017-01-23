@@ -823,6 +823,25 @@
     };
     ```
 
++ 234 Palindrome Linked List
+    大神的递归做法：
+    ```c++
+    class Solution {
+    public:
+        ListNode* temp;
+        bool rec(ListNode* p){
+            if(!p)  return true;
+            bool isp = rec(p->next) & (temp->val == p->val);
+            temp = temp->next;
+            return isp;
+        }
+        bool isPalindrome(ListNode* head) {
+            temp = head;
+            return rec(head);
+        }
+    };
+    ```
+
 + 143 Recorder List
     用队列或递归实现,递归时注意判断变换位置的终止节点
     ```c++
@@ -850,7 +869,7 @@
         }
     };
     ```
-
+    
 + 148 Sort List
     归并排序，时间复杂度O(n);将链表不断分成两组，当分出来的小组只有一个数据时，可以认为这个小组组内已经达到了有序，然后再合并相邻的二个小组就可以了
     时间复杂度O(n)的排序算法：快速排序，归并排序，希尔排序，堆排序
