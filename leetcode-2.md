@@ -850,3 +850,84 @@
         }
     };
     ```
+
++ 148 Sort List
+    归并排序，时间复杂度O(n);将链表不断分成两组，当分出来的小组只有一个数据时，可以认为这个小组组内已经达到了有序，然后再合并相邻的二个小组就可以了
+    时间复杂度O(n)的排序算法：快速排序，归并排序，希尔排序，堆排序
+    ```c++
+    class Solution {
+    public:
+        ListNode* findmid(ListNode* head){
+            if(!head->next) return head;
+            ListNode* fast = head->next;
+            while(fast && fast->next){
+                head = head->next;
+                fast = fast->next->next;
+            }
+            return head;
+        }
+        ListNode* mergesort(ListNode* a, ListNode* b){
+            ListNode* s = new ListNode(0);
+            ListNode* p = s;
+            while(a && b){
+                p->next = a->val < b->val? a : b;
+                if(p->next == a)    a = a->next;
+                else    b = b->next;
+                p = p->next;
+            }
+            if(a)
+                p->next = a;
+            else
+                p->next = b;
+            p = s->next;
+            s->next = NULL;
+            delete s;
+            return p;
+        }
+        ListNode* sortList(ListNode* head) {
+            if(!head || !head->next)    return head;
+            ListNode* mid = NULL;
+            mid = findmid(head);
+            if(!mid)    return head;
+            ListNode* left = head, *right = mid->next;
+            mid->next = NULL;
+            ListNode* a = sortList(left), *b = sortList(right);
+            return mergesort(a, b);
+        }
+    };
+    ```
+
++ 138 Copy List with Random Pointer
+    1. 在OldList中的每个结点后，插入一个CopyNode，这个结点的Random域和Next域与OldList中的被拷贝Node的Random域和Next一致，然后让被拷贝结点的Next域指向CopyNode结点，这样先创建出OldList中结点对应的CopyNode结点。
+    2. 由于所有的CopyNode都已经创建出来了，我们就可以调整这些CopyNode真正的Random域的值了。
+    3. 调整所有CopyNode的Next域的值，恢复OldList所有Node的Next的值到初始状态！
+    ```c++
+    class Solution {
+    public:
+        RandomListNode *copyRandomList(RandomListNode *head) {
+            RandomListNode *p = head;
+            while(p){
+                RandomListNode* a = p, *b = new RandomListNode(p->label);
+                p = p->next;
+                a->next = b;
+                b->next = p;
+            }
+            p = head;
+            while(p){
+                if(p->random)
+                    p->next->random = p->random->next;
+                p = p->next->next;
+            }
+            p = head;
+            RandomListNode* nh = new RandomListNode(0), *pp = nh;
+            while(p){
+                RandomListNode* a = p;
+                pp->next = p->next;
+                p = p->next->next;
+                a->next = p;
+                pp = pp->next;
+            }
+            return nh->next;
+        }
+    };
+    ```
